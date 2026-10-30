@@ -12,8 +12,6 @@ Port **no oficial** del fangame *Pokémon Añil* (RPG Maker XP + Pokémon Essent
 | Firmware | JEB+ *(completar con los firmwares en los que lo hayas probado)* |
 | Resultado | *(completar: funciona / jugable / con fallos conocidos)* |
 
-Fallos conocidos: *(completar tras probarlo)*
-
 ## Requisitos
 
 - Trimui Smart Pro con el sistema Stock OS o un firmware derivado (probado en JEB+).
@@ -24,7 +22,7 @@ Fallos conocidos: *(completar tras probarlo)*
 ## Instalación
 
 1. Copia las tres carpetas (Roms, Data, Imgs) a la microSD
-2. Copia los archivos del juego dentro de `pokemonanil/gamedata/` (debe existir `pokemonanil/gamedata/Game.ini`).
+2. Copia los archivos del juego dentro de `Data/ports/pokemonanil/gamedata/` (debe existir `pokemonanil/gamedata/Game.ini`).
 3. Lanza **Pokemon Anil** desde la lista de Ports.
 
 Estructura final:
@@ -102,7 +100,7 @@ cd build
 ## Licencias
 
 - **mkxp-z** y este port: **GPL-2.0**. Se incluye la licencia en `licenses/`, el commit exacto de mkxp-z usado y los scripts para reproducir la compilación.
-- **TimGM6mb.sf2** (si lo usas): GPL-2.
+- **TimGM6mb.sf2**: GPL-2.
 - **Pokémon Añil** pertenece a su autor y **no se distribuye aquí**.
 - Proyecto de aficionados sin ánimo de lucro, sin relación con Nintendo, Game Freak ni Creatures Inc. *Pokémon* es marca registrada de sus respectivos propietarios.
 
