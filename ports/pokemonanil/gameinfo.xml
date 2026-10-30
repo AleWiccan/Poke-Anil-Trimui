@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./PokemonAnil.sh</path>
+    <name>Pokemon Anil</name>
+    <desc>Fangame de Pokemon hecho con RPG Maker XP: una reimaginacion de Rojo y Azul con mecanicas modernas.</desc>
+    <genre>RPG</genre>
+    <developer>Eric_Lostie</developer>
+  </game>
+</gameList>

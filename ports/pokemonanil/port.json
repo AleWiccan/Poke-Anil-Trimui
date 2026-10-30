@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "name": "pokemonanil.zip",
+  "items": ["PokemonAnil.sh", "pokemonanil"],
+  "items_opt": null,
+  "attr": {
+    "title": "Pokemon Anil",
+    "desc": "Fangame en RPG Maker XP (Pokemon Essentials) de Eric_Lostie. Requiere los archivos del juego.",
+    "inst": "Copia los archivos del juego (Game.ini, Data, Graphics, Audio...) en pokemonanil/gamedata.",
+    "genres": ["rpg"],
+    "porter": ["AleWiccan"],
+    "image": {},
+    "rtr": false,
+    "runtime": null,
+    "reqs": [],
+    "arch": ["aarch64"]
+  }
+}

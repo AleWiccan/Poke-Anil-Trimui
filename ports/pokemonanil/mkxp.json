@@ -1,0 +1,16 @@
+{
+  "gameFolder": "gamedata",
+  "rgssVersion": 1,
+  "fullscreen": true,
+  "fixedAspectRatio": true,
+  "smoothScaling": false,
+  "vsync": true,
+  "frameSkip": true,
+  "fontHeightReporting": 1,
+  "fontOutlineCrop": false,
+  "printFPS": false,
+  "winResizable": false,
+  "midiSoundFont": "soundfont/TimGM6mb.sf2",
+  "dataPathOrg": "pokemonanil",
+  "dataPathApp": "pokemonanil"
+}
