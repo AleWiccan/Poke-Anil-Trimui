@@ -19,22 +19,16 @@ Port **no oficial** del fangame *Pokémon Añil* (RPG Maker XP + Pokémon Essent
 
 ## Instalación
 
-1. Copia `PokemonAnil.sh` a:
-   ```
-   SDCARD/Roms/PORTS/
-   ```
-2. Copia la carpeta `pokemonanil/` a:
-   ```
-   SDCARD/Data/ports/
-   ```
-3. Copia los archivos del juego dentro de `pokemonanil/gamedata/` (debe existir `pokemonanil/gamedata/Game.ini`).
-4. Reinicia el menú y lanza **Pokemon Anil** desde la lista de Ports.
+1. Copia el contenido de este paquete a la raíz de la tarjeta SD.
+2. Copia los archivos del juego dentro de `Data/ports/pokemonanil/gamedata/` (debe existir `pokemonanil/gamedata/Game.ini`).
+3. Reinicia el menú y lanza **Pokemon Anil** desde la lista de Ports.
 
 Estructura final:
 
 ```
 SDCARD/
 ├── Roms/PORTS/PokemonAnil.sh
+├── Imgs/PORTS/PokemonAnil.png         imagen de la carátula
 └── Data/ports/pokemonanil/
     ├── mkxp-z                 ← motor (aarch64)
     ├── libs/                  ← librerías propias (libgcc_s, libstdc++)
@@ -49,19 +43,21 @@ SDCARD/
 
 ## Controles
 
-Mapeo por defecto (editable en `pokemonanil.gptk`, no hace falta recompilar):
+Mapeo por defecto:
 
 | Botón | Tecla | Acción en el juego |
 |---|---|---|
 | D-Pad / palanca izquierda | Flechas | Mover |
-| A | Z | Aceptar / hablar |
-| B | X | Cancelar / volver |
+| B | C | Aceptar / hablar |
+| A | X | Cancelar / volver |
 | X | A | Acción extra |
-| Y | S | Acción extra |
+| Y | Z | Acción extra |
 | L1 / R1 | Q / W | Acciones extra |
-| Select | Shift | Correr |
-| Start | Enter | Menú / aceptar |
-| Menú (central) | Esc | Menú |
+| L2 / R2 | S / D | Acciones extra |
+
+- **Mando nativo de mkxp-z** (por defecto): es el que mejor funciona en la Trimui Smart Pro. El motor trae un mapeador de botones (F1 con un teclado conectado), pero **en esta consola F1 cierra el juego**: el mapeador abre una segunda ventana y el driver de vídeo `mali` solo admite una.
+- **Salir del juego:** mantén pulsado el botón **Menú** (el central) durante 1 segundo. Es un cierre normal; las partidas se guardan desde el propio juego. Para cambiar el tiempo, crea `menuquit-hold.txt` con los milisegundos (`0` = al pulsar).
+- **gptokeyb (opcional):** crea un archivo vacío `gptokeyb.on` para convertir el mando en teclado con `pokemonanil.gptk` (requiere PortMaster). Mezclarlo con el mando nativo puede dar pulsaciones dobles; está pensado solo para quien quiera reasignar a mano.
 
 ## Configuración
 

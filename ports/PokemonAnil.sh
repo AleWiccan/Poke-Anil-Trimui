@@ -10,7 +10,7 @@ done
 cd "$GAMEDIR" || exit 1
 
 LOGF="$GAMEDIR/log.txt"
-echo "[launcher] version 8 - $(date)" > "$LOGF"
+echo "[launcher] version 9 - $(date)" > "$LOGF"
 
 # Libs propias primero, luego la SDL2 de la consola. SDL_VIDEODRIVER sin definir (driver mali).
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/trimui/lib:$LD_LIBRARY_PATH"
@@ -82,54 +82,49 @@ if [ -f "$GAMEDIR/swap.on" ] && ! grep -q "$GAMEDIR/swapfile" /proc/swaps 2>/dev
   swapon "$GAMEDIR/swapfile" >/dev/null 2>&1 || echo "[launcher] swapon FALLO" >> "$LOGF"
 fi
 
-# --- Controles: gptokeyb de PortMaster (mando -> teclado) ---
+# --- Controles ---
+# Por defecto se usa el mando NATIVO de mkxp-z (es el que mejor funciona en esta consola), SIN gptokeyb.
+# Para usar gptokeyb (mando -> teclado, mapeo en pokemonanil.gptk), crea un archivo vacio gptokeyb.on
 GPTK=""
-# Para probar SOLO con el mando nativo de mkxp-z (sin gptokeyb), crea un archivo vacio gptokeyb.off
-if [ -f "$GAMEDIR/gptokeyb.off" ]; then
-  echo "[launcher] gptokeyb DESACTIVADO (gptokeyb.off): solo el mando nativo de mkxp-z" >> "$LOGF"
+if [ -f "$GAMEDIR/gptokeyb.on" ]; then
+  for c in /mnt/SDCARD/Data/ports/PortMaster /mnt/SDCARD/Apps/PortMaster/PortMaster /mnt/SDCARD/Roms/PORTS/PortMaster \
+           /mnt/SDCARD/Apps/PortMaster /opt/system/Tools/PortMaster /roms/ports/PortMaster "$HERE/PortMaster"; do
+    if [ -x "$c/gptokeyb" ]; then GPTK="$c/gptokeyb"; break; fi
+  done
+  if [ -n "$GPTK" ]; then
+    echo "[launcher] gptokeyb ACTIVADO (gptokeyb.on): $GPTK" >> "$LOGF"
+    CTRLDIR="$(dirname "$GPTK")"
+    [ -f "$CTRLDIR/gamecontrollerdb.txt" ] && export SDL_GAMECONTROLLERCONFIG_FILE="$CTRLDIR/gamecontrollerdb.txt"
+    [ -d "$CTRLDIR/libs" ] && export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CTRLDIR/libs"
+    "$GPTK" "mkxp-z" -c "$GAMEDIR/pokemonanil.gptk" >> "$LOGF" 2>&1 &
+    GPTK_PID=$!
+  else
+    echo "[launcher] AVISO: gptokeyb.on existe pero no se encontro gptokeyb" >> "$LOGF"
+  fi
 else
-for c in /mnt/SDCARD/Data/ports/PortMaster /mnt/SDCARD/Apps/PortMaster/PortMaster /mnt/SDCARD/Roms/PORTS/PortMaster \
-         /mnt/SDCARD/Apps/PortMaster /opt/system/Tools/PortMaster /roms/ports/PortMaster "$HERE/PortMaster"; do
-  if [ -x "$c/gptokeyb" ]; then GPTK="$c/gptokeyb"; break; fi
-done
-fi
-if [ -n "$GPTK" ]; then
-  echo "[launcher] gptokeyb: $GPTK" >> "$LOGF"
-  CTRLDIR="$(dirname "$GPTK")"
-  # Base de mandos de PortMaster (la usa gptokeyb para saber que boton es cual)
-  [ -f "$CTRLDIR/gamecontrollerdb.txt" ] && export SDL_GAMECONTROLLERCONFIG_FILE="$CTRLDIR/gamecontrollerdb.txt"
-  [ -d "$CTRLDIR/libs" ] && export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$CTRLDIR/libs"
-  "$GPTK" "mkxp-z" -c "$GAMEDIR/pokemonanil.gptk" >> "$LOGF" 2>&1 &
-  GPTK_PID=$!
-else
-  echo "[launcher] AVISO: no se encontro gptokeyb; sin mapeo a teclado" >> "$LOGF"
+  echo "[launcher] controles: mando nativo de mkxp-z (gptokeyb desactivado; crea gptokeyb.on para activarlo)" >> "$LOGF"
 fi
 
-# --- Mando nativo de mkxp-z: se IGNORA (solo para mkxp-z; gptokeyb lo sigue leyendo) ---
-# mkxp-z abre el mando por SDL_GameController y SDL llama "A" al boton fisico B de esta consola (y viceversa).
-# Si se dejan activos a la vez el mando nativo y gptokeyb, se pisan y el mapeo de pokemonanil.gptk "no cambia nada".
-# EXPERIMENTAL y desactivado por defecto (en una prueba la consola se bloqueo entera con esto activo).
-# Para probarlo, crea un archivo vacio ignore-pad.on en la carpeta del port.
-if [ -f "$GAMEDIR/ignore-pad.on" ]; then
-  PADID=""; LASTI=""
-  while IFS= read -r line; do
-    case "$line" in
-      I:*) LASTI="$line" ;;
-      N:*Xbox*360*) V="${LASTI#*Vendor=}"; V="${V%% *}"; P="${LASTI#*Product=}"; P="${P%% *}"; PADID="0x$V/0x$P"; break ;;
-    esac
-  done < /proc/bus/input/devices 2>/dev/null
-  if [ -n "$PADID" ]; then
-    export SDL_GAMECONTROLLER_IGNORE_DEVICES="$PADID"
-    echo "[launcher] mando nativo de mkxp-z ignorado: $PADID (solo gptokeyb)" >> "$LOGF"
-  else
-    echo "[launcher] AVISO: no se encontro el mando en /proc/bus/input/devices; mkxp-z usara su mando nativo" >> "$LOGF"
-  fi
-fi
+# --- Salir del juego manteniendo el boton Menu (indice 8) ---
+# menuquit vigila el mando y envia SIGTERM a mkxp-z. Tiempo que hay que mantenerlo: 1000 ms por defecto;
+# se cambia con un archivo menuquit-hold.txt que contenga los milisegundos (0 = al pulsar, sin mantener).
+chmod +x "$GAMEDIR/menuquit" 2>/dev/null
+MQ_HOLD=1000
+[ -f "$GAMEDIR/menuquit-hold.txt" ] && MQ_HOLD="$(head -n 1 "$GAMEDIR/menuquit-hold.txt" | tr -d '\r\n ')"
 
 sync 2>/dev/null   # que el log llegue a la SD aunque la consola se cuelgue
-"$GAMEDIR/mkxp-z" >> "$LOGF" 2>&1
+"$GAMEDIR/mkxp-z" >> "$LOGF" 2>&1 &
+MK_PID=$!
+if [ -x "$GAMEDIR/menuquit" ]; then
+  "$GAMEDIR/menuquit" "$MK_PID" 8 "$MQ_HOLD" >> "$LOGF" 2>&1 &
+  MQ_PID=$!
+else
+  echo "[launcher] AVISO: falta menuquit; no se podra salir con el boton Menu" >> "$LOGF"
+fi
+wait "$MK_PID"
 CODE=$?
-echo "[launcher] codigo de salida: $CODE  (137 = falta de memoria)" >> "$LOGF"
+[ -n "$MQ_PID" ] && kill "$MQ_PID" 2>/dev/null
+echo "[launcher] codigo de salida: $CODE  (137 = falta de memoria, 143 = cerrado con Menu)" >> "$LOGF"
 [ "$CODE" = "137" ] && dmesg 2>/dev/null | grep -i -E "killed process|out of memory|oom" | tail -5 >> "$LOGF"
 [ -n "$GPTK_PID" ] && kill "$GPTK_PID" 2>/dev/null
 exit 0
