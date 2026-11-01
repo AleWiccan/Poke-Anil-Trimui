@@ -1,16 +1,16 @@
 {
-  "gameFolder": "gamedata",
+  "gameFolder": "/mnt/SDCARD/Data/ports/pokemonanil/gamedata",
+  "midiSoundFont": "/mnt/SDCARD/Data/ports/pokemonanil/gamedata/soundfont.sf2",
   "rgssVersion": 1,
   "fullscreen": true,
   "fixedAspectRatio": true,
-  "smoothScaling": false,
+  "smoothScaling": 0,
   "vsync": true,
   "frameSkip": true,
   "fontHeightReporting": 1,
   "fontOutlineCrop": false,
   "printFPS": false,
   "winResizable": false,
-  "midiSoundFont": "soundfont/TimGM6mb.sf2",
   "dataPathOrg": "pokemonanil",
   "dataPathApp": "pokemonanil"
 }
